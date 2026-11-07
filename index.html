@@ -1,121 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>The Basement — A Binding of Isaac Tribute</title>
-<meta name="description" content="A fan-made, frontend-only Binding of Isaac tribute site. Pick a character, take items off pedestals, and build a broken run." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="style.css" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💧</text></svg>" />
-</head>
-<body>
-  <div class="basement-glow" aria-hidden="true"></div>
-
-  <header class="hero">
-    <p class="kicker">a fan-made tribute · frontend only · no basement was harmed</p>
-    <h1>The Basement</h1>
-    <p class="subtitle">Mom is coming. The trapdoor is open. Pick a character, grab what's on the
-      pedestals, and build a run broken enough to survive the depths.</p>
-    <div class="hero-actions">
-      <a class="btn btn-blood" href="#run">Start a run ↓</a>
-      <button class="btn btn-paper" id="reroll-all" type="button">🎲 Reroll everything</button>
-    </div>
-    <div class="hero-stats" aria-hidden="true">
-      <span>🗝️ Basement I</span><span>💣 01</span><span>🪙 03</span><span>❤️❤️❤️</span>
-    </div>
-  </header>
-
-  <main>
-    <!-- ============ CHARACTER SELECT ============ -->
-    <section class="paper" id="characters">
-      <h2>Who goes down?</h2>
-      <p class="note">Every character starts with different stats. Click one to start a fresh run with them.</p>
-      <div class="char-grid" id="char-grid"><!-- built by script.js --></div>
-    </section>
-
-    <!-- ============ THE RUN ============ -->
-    <section class="paper" id="run">
-      <h2>Your run</h2>
-      <div class="run-layout">
-        <div class="run-left">
-          <div class="active-char">
-            <div class="active-face" id="active-face">👶</div>
-            <div>
-              <div class="active-name" id="active-name">Isaac</div>
-              <div class="active-flavor" id="active-flavor">Starts with the D6 — if he ever finds it.</div>
-            </div>
-          </div>
-
-          <div class="stats" id="stats"><!-- built by script.js --></div>
-
-          <div class="deal-meter">
-            <div class="deal-head">
-              <span>😈 Devil deal chance</span>
-              <strong id="deal-chance">36.5%</strong>
-            </div>
-            <div class="deal-bar"><div class="deal-fill" id="deal-fill"></div></div>
-            <label class="check"><input type="checkbox" id="deal-nodamage" /> Took no red-heart damage this floor (+)</label>
-            <label class="check"><input type="checkbox" id="deal-bossitem" /> Skipped the boss item (−)</label>
-            <p class="note small">A loving approximation of the real formula. The basement accepts no appeals.</p>
-          </div>
-        </div>
-
-        <div class="run-right">
-          <h3>The item room</h3>
-          <p class="note">One pedestal. Whatever is on it is yours — for better or worse.</p>
-          <div class="pedestal-wrap">
-            <div class="pedestal-item" id="pedestal-item" title="Take this item">❓</div>
-            <div class="pedestal"></div>
-            <div class="pedestal-name" id="pedestal-name">???</div>
-            <div class="pedestal-quote" id="pedestal-quote">"It's calling your name."</div>
-          </div>
-          <div class="pedestal-actions">
-            <button class="btn btn-blood" id="take-item" type="button">Take item</button>
-            <button class="btn btn-paper" id="reroll-item" type="button">🎲 Reroll (D6)</button>
-          </div>
-
-          <h3>Collected</h3>
-          <ul class="collected" id="collected">
-            <li class="empty">Nothing yet. The pedestal provides.</li>
-          </ul>
-          <button class="btn btn-paper" id="reset-run" type="button">↩️ Die &amp; restart (reset run)</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ FLOORS ============ -->
-    <section class="paper">
-      <h2>How deep does it go?</h2>
-      <ol class="floors">
-        <li><strong>Basement</strong> — where it all starts. Flies, spiders, and regret.</li>
-        <li><strong>Cellar</strong> — the basement, but worse and with more spiders.</li>
-        <li><strong>Caves</strong> — the rocks shoot back now. So does everything else.</li>
-        <li><strong>Depths</strong> — Mom's footsteps are getting louder.</li>
-        <li><strong>Necropolis</strong> — the dead don't rest, and neither do you.</li>
-        <li><strong>Womb</strong> — it lives. Unfortunately, so does its heart.</li>
-        <li><strong>???</strong> — hush. Something is waiting.</li>
-        <li><strong>Chest / Dark Room</strong> — pick a door. Live (or don't) with it.</li>
-      </ol>
-    </section>
-
-    <section class="paper center">
-      <h2>One more run?</h2>
-      <p class="note">That was the whole site: HTML, CSS and JavaScript. No server, no database,
-        no backend — the basement runs entirely in your browser.</p>
-      <a class="btn btn-blood" href="#run">Back to the item room ↑</a>
-    </section>
-  </main>
-
-  <footer>
-    <p>Fan-made tribute. <em>The Binding of Isaac</em> is a game by Edmund McMillen and Nicalis.
-      This site is not affiliated with them — it's a coding test by Ryan's Muse (see the README in the repo).</p>
-  </footer>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<script src="script.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Basement — A Binding of Isaac Field Guide</title>
+    <meta name="description" content="A fan-made field guide to The Binding of Isaac: characters, iconic items, and every floor from the Basement to The Void." />
+    <script type="module" crossorigin src="./assets/index-_xHgZNyc.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BakA3S-a.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>

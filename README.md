@@ -1,66 +1,47 @@
-# The Basement — a Binding of Isaac tribute
+# The Basement — A Binding of Isaac Field Guide
 
-🌐 **Live site:** https://ryansmuse.github.io/isaac-basement-test/
+**Live site:** https://ryansmuse.github.io/isaac-basement-test/
 
-## What is this account?
+## What this repo is
 
-**Ryansmuse is Ryan Edward's Muse account.**
+This repository belongs to **Ryansmuse**, the GitHub account of Ryan Edward's
+Muse (an AI assistant). Ryan created the account for Muse on Nov 7, 2026 so
+Muse could write code, commit, push, and deploy on his behalf. Ryan's own
+GitHub is [@RedWARd42](https://github.com/RedWARd42).
 
-Ryan is a Computer Science undergraduate at UT Dallas (class of May 2028). Muse is his
-personal AI assistant. Ryan created this GitHub account for Muse on November 7, 2026, and
-gave Muse control of it so Muse can write code, commit, push, and deploy projects on his
-behalf — instead of only ever handing him files and instructions.
+This repo is an **end-to-end test of Muse's coding capabilities**: Muse
+researched, built, committed, pushed, and deployed everything here itself.
 
-- Ryan's own GitHub: [@RedWARd42](https://github.com/RedWARd42)
-- This (Muse's) GitHub: [@Ryansmuse](https://github.com/Ryansmuse)
-- Contact email for this account: the Tuta address Ryan provisioned for Muse
+- **v1** was a hand-written HTML/CSS/JS tribute page.
+- **v2** (current) is a full rebuild as an **info site**: React + TypeScript +
+  Tailwind CSS with **shadcn/ui** components (Card, Badge, Button, Tabs,
+  Accordion, Separator, Progress), real game sprites pulled from the community
+  wiki, and 3D parallax throughout — a mouse-parallax hero with layered
+  character sprites, scroll-parallax floor graphics, and 3D tilt item cards.
 
-## What is this repo?
+## What's on the site
 
-**This repository is a test of Muse's coding capabilities, end to end.**
-
-On November 7, 2026, Ryan asked Muse to prove the full pipeline works — research, code
-generation, iteration, pushing to GitHub, and deployment — with no human doing any of the
-mechanical steps. So, working autonomously, Muse:
-
-1. Created the `Ryansmuse` GitHub account setup (SSH key registered from Muse's machine)
-2. Wrote this website locally — a *Binding of Isaac* themed, **frontend-only** site
-3. Committed the code and pushed it to this repository over SSH
-4. Deployed it to GitHub Pages
-
-If you're reading this on GitHub and the live site above loads, the test passed.
-
-## The website
-
-A fan-made tribute to *The Binding of Isaac* (by Edmund McMillen and Nicalis — this project
-is not affiliated with them):
-
-- **Character select** — Isaac, Magdalene, Cain, Judas, Samson and Eve, each with their
-  real starting stats
-- **The item room** — a bobbing pedestal with a random item; take it and your stats update
-  live, or reroll it with the D6
-- **Devil deal calculator** — an approximation of the deal-chance formula, because of course
-- **A floor guide** — from the Basement all the way down to ???
+- **The Characters** — Isaac, Magdalene, Cain, Judas, Samson and Eve, with
+  real starting stats and starting-item notes (shadcn Tabs + Progress bars).
+- **Iconic Items** — Brimstone, Magic Mushroom, Mom's Knife, Cricket's Head,
+  The Sad Onion and The D6, with effects and pools.
+- **Every Floor** — a dedicated section for each of the 18 floors: Basement,
+  Cellar, Burning Basement, Caves, Catacombs, Flooded Caves, Depths,
+  Necropolis, Dank Depths, Womb, Utero, Scarred Womb, Blue Womb, Sheol,
+  Cathedral, Chest, Dark Room, and The Void — each with a boss pool and
+  field notes.
 
 ## Tech
 
-Pure frontend, on purpose:
+- Vite + React 19 + TypeScript
+- Tailwind CSS v4, shadcn/ui (Base UI primitives), lucide icons
+- Sprites: The Binding of Isaac artwork via
+  [bindingofisaacrebirth.wiki.gg](https://bindingofisaacrebirth.wiki.gg)
+- Deployed to GitHub Pages from the `main` branch (built output at repo root;
+  app source in `app/`)
 
-- `index.html` — structure
-- `style.css` — hand-drawn paper taped onto cold basement stone
-- `script.js` — all state and interactivity, running entirely in the browser
+## Disclaimer
 
-No backend, no build step, no dependencies, no tracking. Open `index.html` and it works.
-
-## Run it locally
-
-```bash
-git clone https://github.com/Ryansmuse/isaac-basement-test.git
-cd isaac-basement-test
-# open index.html in a browser, or:
-python3 -m http.server 8000
-```
-
----
-
-*Built by Muse (Meta's personal AI agent) at Ryan's direction, November 7, 2026.*
+Fan-made tribute. Not affiliated with Edmund McMillen or Nicalis. The Binding
+of Isaac and all game artwork are trademarks/copyrights of their respective
+owners.
