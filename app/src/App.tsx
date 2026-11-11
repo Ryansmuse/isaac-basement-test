@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import FloorSection from '@/components/FloorSection'
 import GameImg from '@/components/GameImg'
 import ParallaxHero from '@/components/ParallaxHero'
+import ScrollBackdrop from '@/components/ScrollBackdrop'
+import TearCursor from '@/components/TearCursor'
 import TiltCard from '@/components/TiltCard'
 import { characters, floors, items } from '@/data/game'
 
@@ -137,12 +139,13 @@ function Items() {
 function Floors() {
   return (
     <div id="floors">
-      <section className="border-t border-white/5 bg-[#0d0a09] py-24 text-center">
+      <section className="border-t border-white/5 bg-black/40 py-24 text-center">
         <Badge variant="outline" className="border-red-900/60 text-red-200">How deep does it go?</Badge>
         <h2 className="mt-4 text-4xl font-black tracking-tight text-stone-50 md:text-5xl">Every Floor, Top to Bottom</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-stone-400">
+        <p className="mx-auto mt-3 max-w-2xl text-stone-300">
           Eighteen stops on the way down: three chapters of variants, the Womb, the light and
-          dark paths, and the place after the end. Each floor graphic parallaxes as you scroll.
+          dark paths, and the place after the end. Keep scrolling — Isaac runs down through the
+          trapdoor into each next floor, and the room changes around him as he lands.
         </p>
       </section>
       {floors.map((floor, i) => (
@@ -174,7 +177,9 @@ function Footer() {
 
 export default function App() {
   return (
-    <div className="dark min-h-screen bg-[#0a0808] font-sans text-stone-100 antialiased">
+    <div className="dark relative min-h-screen bg-[#0a0808] font-sans text-stone-100 antialiased">
+      <ScrollBackdrop />
+      <TearCursor />
       <Nav />
       <ParallaxHero />
       <Characters />

@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,57 +9,20 @@ interface FloorSectionProps {
   index: number
 }
 
-/** One floor = one full section, with a scroll-parallax floor graphic and a shadcn info card. */
+/**
+ * One floor = one full section with a shadcn info card. The room graphic
+ * itself is the fixed page backdrop (ScrollBackdrop crossfades it to match
+ * the floor Isaac has run down into); this section lays its tint over it.
+ */
 export default function FloorSection({ floor, index }: FloorSectionProps) {
-  const sectionRef = useRef<HTMLElement>(null)
-  const bgRef = useRef<HTMLDivElement>(null)
   const flipped = index % 2 === 1
-
-  useEffect(() => {
-    let raf = 0
-    const update = () => {
-      const section = sectionRef.current
-      const bg = bgRef.current
-      if (section && bg) {
-        const rect = section.getBoundingClientRect()
-        const progress = (rect.top + rect.height / 2 - window.innerHeight / 2) / window.innerHeight
-        bg.style.transform = `translate3d(0, ${(progress * -70).toFixed(1)}px, 0) scale(1.12)`
-      }
-      raf = 0
-    }
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update)
-    }
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [])
 
   return (
     <section
-      ref={sectionRef}
       id={`floor-${floor.id}`}
       className="relative overflow-hidden border-t border-white/5"
-      style={{ background: `linear-gradient(160deg, ${floor.tint} 0%, #0a0808 78%)` }}
+      style={{ background: `linear-gradient(160deg, ${floor.tint}b3 0%, rgba(10,8,8,0.38) 55%, rgba(10,8,8,0.72) 100%)` }}
     >
-      {/* parallax floor graphic */}
-      <div
-        ref={bgRef}
-        className={`pointer-events-none absolute top-0 h-full w-[46%] opacity-25 will-change-transform md:opacity-40 ${flipped ? 'left-0' : 'right-0'}`}
-      >
-        <GameImg
-          srcKey={`floor-${floor.id}`}
-          alt={`${floor.name} in-game room`}
-          ext="webp"
-          lazy
-          className="h-full w-full object-cover"
-        />
-      </div>
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/60" />
 
       <div className={`relative mx-auto grid max-w-6xl items-center gap-8 px-6 py-24 md:grid-cols-2 md:py-32 ${flipped ? '' : ''}`}>

@@ -13,11 +13,17 @@ This repo is an **end-to-end test of Muse's coding capabilities**: Muse
 researched, built, committed, pushed, and deployed everything here itself.
 
 - **v1** was a hand-written HTML/CSS/JS tribute page.
-- **v2** (current) is a full rebuild as an **info site**: React + TypeScript +
+- **v2** is a full rebuild as an **info site**: React + TypeScript +
   Tailwind CSS with **shadcn/ui** components (Card, Badge, Button, Tabs,
   Accordion, Separator, Progress), real game sprites pulled from the community
   wiki, and 3D parallax throughout — a mouse-parallax hero with layered
   character sprites, scroll-parallax floor graphics, and 3D tilt item cards.
+- **v3** (current) makes the descent real: the **cursor is one of Isaac's
+  tears** (click anywhere and he fires one), and a **background Isaac runs
+  down the screen as you scroll** — dropping in at the top of each floor,
+  running down the room, and falling through a trapdoor at the bottom into
+  the next floor. The page backdrop is a fixed full-screen room graphic that
+  **crossfades to match whichever floor Isaac is on**.
 
 ## What's on the site
 
