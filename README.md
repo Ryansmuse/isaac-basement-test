@@ -19,11 +19,14 @@ researched, built, committed, pushed, and deployed everything here itself.
   wiki, and 3D parallax throughout — a mouse-parallax hero with layered
   character sprites, scroll-parallax floor graphics, and 3D tilt item cards.
 - **v3** (current) makes the descent real: the **cursor is one of Isaac's
-  tears** (click anywhere and he fires one), and a **background Isaac runs
-  down the screen as you scroll** — dropping in at the top of each floor,
-  running down the room, and falling through a trapdoor at the bottom into
-  the next floor. The page backdrop is a fixed full-screen room graphic that
-  **crossfades to match whichever floor Isaac is on**.
+  tears** (click anywhere and he fires one), and an **Isaac in the background
+  runs down the screen as you scroll**, locked 1:1 to the scroll pace — one
+  full descent per viewport of scrolling, falling through a trapdoor at the
+  bottom into the next run. The page backdrop is a fixed full-screen room
+  graphic that **crossfades to match whichever floor you're on**; the room
+  backdrops are the game's real room screenshots with the baked-in Isaac
+  inpainted out (diffusion fill + borrowed grain), so the only Isaac in a
+  room is the one running through it.
 
 ## What's on the site
 

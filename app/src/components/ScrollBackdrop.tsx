@@ -2,15 +2,17 @@ import { useEffect, useRef } from 'react'
 import { floors } from '@/data/game'
 
 /**
- * The descent layer:
- * - A fixed full-screen backdrop that crossfades to the room graphic of the
- *   floor currently in view, so the page background always matches the floor.
- * - A fixed Isaac who runs down the screen as you scroll each floor, drops
- *   through a trapdoor at the bottom, and lands in the next floor.
- * - A trapdoor at the bottom of the screen whose doors swing open as Isaac
- *   reaches it.
- * Everything is driven by one rAF-throttled scroll listener writing styles
- * directly to refs — no React state churn per frame.
+ * The descent layer — everything here lives in ONE fixed backdrop stack
+ * behind the page content:
+ * - The room graphic crossfades to match the floor in view (the room
+ *   backdrops themselves are empty rooms — no Isaac baked in).
+ * - Isaac runs down through that backdrop. His descent is locked 1:1 to the
+ *   scroller: one full top-to-bottom run per viewport-height of scrolling,
+ *   no easing, so he moves at exactly the pace of the page. At the bottom of
+ *   each run a trapdoor opens and he drops through into the next run.
+ * - The dim overlays sit on top of him too, so he reads as part of the room
+ *   behind the content, never over it.
+ * One rAF-throttled scroll listener writes styles directly to refs.
  */
 export default function ScrollBackdrop() {
   const layersRef = useRef<(HTMLDivElement | null)[]>([])
@@ -34,26 +36,29 @@ export default function ScrollBackdrop() {
     const update = () => {
       raf = 0
       const vh = window.innerHeight
-      const mid = window.scrollY + vh / 2
+      const mid = window.scrollY + vh / 2 // the scroller's position in the document
 
-      // Which floor section is under the middle of the viewport, and how far
-      // through it are we (q: 0 at its top, 1 at its bottom)?
+      const tops: number[] = []
+      const heights: number[] = []
+      for (let i = 0; i < sections.length; i++) {
+        tops.push(sections[i].offsetTop)
+        heights.push(sections[i].offsetHeight)
+      }
+      const regionStart = tops[0]
+      const regionEnd = tops[tops.length - 1] + heights[heights.length - 1]
+
+      // Which floor is the scroller in, and how far through it (for backdrop
+      // crossfade + gentle parallax on the active room)?
       let active = -1
       let q = 0
-      let firstTop = Infinity
       for (let i = 0; i < sections.length; i++) {
-        const t = sections[i].offsetTop
-        const h = sections[i].offsetHeight
-        if (i === 0) firstTop = t
-        if (active === -1 && mid >= t && mid < t + h) {
+        if (mid >= tops[i] && mid < tops[i] + heights[i]) {
           active = i
-          q = clamp01((mid - t) / h)
+          q = clamp01((mid - tops[i]) / heights[i])
+          break
         }
       }
-
-      // Backdrop: before the descent starts, idle on the Basement; past the
-      // end, stay on the last floor.
-      const ambient = active !== -1 ? active : mid < firstTop ? 0 : sections.length - 1
+      const ambient = active !== -1 ? active : mid < regionStart ? 0 : sections.length - 1
       if (ambient !== lastAmbient) {
         lastAmbient = ambient
         layersRef.current.forEach((layer, i) => {
@@ -69,39 +74,33 @@ export default function ScrollBackdrop() {
       const door = doorRef.current
       if (!isaac || !door) return
 
-      if (reduced || active === -1) {
+      const inDescent = mid >= regionStart && mid < regionEnd
+      if (reduced || !inDescent) {
         isaac.style.opacity = '0'
         door.style.opacity = '0'
         return
       }
 
-      // Isaac's run down the room, in three phases per floor.
-      let y: number
-      let opacity = 0.95
-      let scale = 1
-      if (q < 0.1) {
-        // Drops in from the room above, lands with the ease-out.
-        const t = q / 0.1
-        y = lerp(-0.12, 0.16, 1 - Math.pow(1 - t, 2)) * vh
-        opacity = 0.95 * clamp01(t * 2.5)
-      } else if (q <= 0.85) {
-        // Running down the room.
-        y = lerp(0.16, 0.66, (q - 0.1) / 0.75) * vh
-      } else {
-        // Falls through the trapdoor into the next floor.
-        const d = (q - 0.85) / 0.15
-        y = lerp(0.66, 0.97, d * d) * vh
-        opacity = 0.95 * (1 - clamp01((d - 0.55) / 0.45))
-        scale = 1 - d * 0.1
-      }
-      const sway = Math.sin(window.scrollY * 0.004) * 14
+      // Pace lock: u = pixels scrolled into the descent; one full run cycle
+      // per vh of scrolling. c is the position inside the current run.
+      const u = mid - regionStart
+      const c = (u % vh) / vh
+
+      // Strictly linear: he enters just above the top and leaves at the
+      // bottom at exactly the scroller's speed.
+      const y = lerp(-0.13, 1.0, c) * vh
+      let opacity = 0.85
+      if (c < 0.05) opacity *= c / 0.05 // materializes at the top of the room
+      if (c > 0.9) opacity *= 1 - (c - 0.9) / 0.1 // sinks through the trapdoor
+      const scale = c > 0.9 ? 1 - ((c - 0.9) / 0.1) * 0.12 : 1
+      const sway = Math.sin(u * 0.01) * 10
       isaac.style.opacity = opacity.toFixed(2)
       isaac.style.transform = `translate3d(calc(-50% + ${sway.toFixed(1)}px), ${y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`
 
-      // Trapdoor fades in as Isaac nears the bottom; doors swing open in the
-      // drop phase.
-      door.style.opacity = clamp01((q - 0.55) / 0.2).toFixed(2)
-      const open = q > 0.85 ? (q - 0.85) / 0.15 : 0
+      // Trapdoor: fades in near the end of each run; doors swing open as he
+      // reaches them.
+      door.style.opacity = clamp01((c - 0.6) / 0.18).toFixed(2)
+      const open = clamp01((c - 0.84) / 0.14)
       if (doorLRef.current) doorLRef.current.style.transform = `rotateY(${(-72 * open).toFixed(1)}deg)`
       if (doorRRef.current) doorRRef.current.style.transform = `rotateY(${(72 * open).toFixed(1)}deg)`
     }
@@ -120,37 +119,32 @@ export default function ScrollBackdrop() {
   }, [])
 
   return (
-    <>
-      {/* Fixed room backdrop — crossfades to the floor Isaac is on */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#0a0808]">
-        {floors.map((floor, i) => (
-          <div
-            key={floor.id}
-            ref={(el) => {
-              layersRef.current[i] = el
-            }}
-            className="absolute inset-0 transition-opacity duration-700 will-change-transform"
-            style={{ opacity: i === 0 ? 1 : 0 }}
-          >
-            <img
-              src={`game/floor-${floor.id}.webp`}
-              alt=""
-              draggable={false}
-              decoding="async"
-              loading={i < 2 ? 'eager' : 'lazy'}
-              className="h-full w-full scale-[1.07] object-cover"
-            />
-          </div>
-        ))}
-        <div className="absolute inset-0 bg-black/45" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70" />
-      </div>
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#0a0808]">
+      {/* Room backdrops — crossfade to the floor the scroller is in */}
+      {floors.map((floor, i) => (
+        <div
+          key={floor.id}
+          ref={(el) => {
+            layersRef.current[i] = el
+          }}
+          className="absolute inset-0 transition-opacity duration-700 will-change-transform"
+          style={{ opacity: i === 0 ? 1 : 0 }}
+        >
+          <img
+            src={`game/floor-${floor.id}.webp`}
+            alt=""
+            draggable={false}
+            decoding="async"
+            loading={i < 2 ? 'eager' : 'lazy'}
+            className="h-full w-full scale-[1.07] object-cover"
+          />
+        </div>
+      ))}
 
-      {/* Isaac, running down through the floors as you scroll */}
+      {/* Isaac, running down through the room behind everything */}
       <div
         ref={isaacRef}
-        aria-hidden
-        className="pointer-events-none fixed left-1/2 top-0 z-[6] w-20 opacity-0 will-change-transform md:w-24"
+        className="absolute left-1/2 top-0 w-14 opacity-0 will-change-transform md:w-[4.25rem]"
       >
         <img
           src="game/isaac.png"
@@ -160,13 +154,9 @@ export default function ScrollBackdrop() {
         />
       </div>
 
-      {/* The trapdoor into the next floor */}
-      <div
-        ref={doorRef}
-        aria-hidden
-        className="pointer-events-none fixed bottom-[2.5vh] left-1/2 z-[5] -translate-x-1/2 opacity-0"
-      >
-        <div className="relative h-5 w-40 md:w-52" style={{ perspective: '300px' }}>
+      {/* The trapdoor into the next room */}
+      <div ref={doorRef} className="absolute bottom-[2.5vh] left-1/2 -translate-x-1/2 opacity-0">
+        <div className="relative h-4 w-36 md:w-44" style={{ perspective: '300px' }}>
           <div className="absolute inset-0 rounded-sm bg-black shadow-[inset_0_0_18px_rgba(0,0,0,1)]" />
           <div
             ref={doorLRef}
@@ -181,6 +171,10 @@ export default function ScrollBackdrop() {
           next floor
         </p>
       </div>
-    </>
+
+      {/* Dim overlays — over the room AND Isaac, under the content */}
+      <div className="absolute inset-0 bg-black/45" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70" />
+    </div>
   )
 }
